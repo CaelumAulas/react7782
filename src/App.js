@@ -11,12 +11,38 @@ class App extends Component {
         super()
 
        this.state = {
-           novoTweet: ''
+           novoTweet: '',
+           tweets: ['alo alo w brazil', 'xablau']
        }
+
+    //    this.adicionaTweet = this.adicionaTweet.bind(this)
+   }
+
+//    adicionaTweet(event) {
+//         // Prevenir o default?
+//         event.preventDefault()
+//         // primeiro pegamos o conteudo
+//         console.log(this)
+//         // valida o conteudo?
+//         // põe no state?
+//    }
+
+   teste = 'Mario'
+
+   adicionaTweet = (event) => { // Stage 3 do TC39
+    event.preventDefault()
+    console.log(this.state.novoTweet)
+    // valida o conteudo?
+    if(this.state.novoTweet) {
+        this.setState({
+            tweets: [this.state.novoTweet, ...this.state.tweets],
+            novoTweet: ''
+        })
+    }
    }
 
   render() {
-      console.log('Render rodando loucamente')
+    //   console.log('Render rodando loucamente')
     return (
       <Fragment>
         <Cabecalho>
@@ -25,7 +51,7 @@ class App extends Component {
         <div className="container">
             <Dashboard>
                 <Widget>
-                    <form className="novoTweet">
+                    <form className="novoTweet" onSubmit={this.adicionaTweet}>
                         <div className="novoTweet__editorArea">
                             <span className={ `novoTweet__status ${
                                 this.state.novoTweet.length > 140
@@ -56,7 +82,11 @@ class App extends Component {
             <Dashboard posicao="centro">
                 <Widget>
                     <div className="tweetsArea">
-                        <Tweet />
+                        {
+                            this.state.tweets.map(function(tweetAtual, indice) {
+                                return <Tweet key={indice} texto={tweetAtual} />
+                            })
+                        }
                     </div>
                 </Widget>
             </Dashboard>

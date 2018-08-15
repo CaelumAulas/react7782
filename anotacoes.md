@@ -45,3 +45,5 @@
 - Clean Code: https://www.google.com.br/search?q=clean+code&oq=clean+code&aqs=chrome..69i57j69i60l2j69i59j69i60j69i61.1079j0j7&sourceid=chrome&ie=UTF-8
 - Pare de chutar CSS: https://www.youtube.com/watch?v=5PS6ku8NzIE&list=PLirko8T4cEmx5eBb1-9j6T6Gl4aBtZ_5x
 - Aprendendo a aprender: https://pt.coursera.org/learn/aprender
+- Critical Path
+- Pixel pipeline

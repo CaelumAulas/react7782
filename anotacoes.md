@@ -47,3 +47,5 @@
 - Aprendendo a aprender: https://pt.coursera.org/learn/aprender
 - Critical Path
 - Pixel pipeline
+- Como não repetir um id? https://www.npmjs.com/package/uuid
+- React Components: https://github.com/brillout/awesome-react-components

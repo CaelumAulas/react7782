@@ -5,47 +5,67 @@ import Dashboard from '../../components/Dashboard'
 import Widget from '../../components/Widget'
 import TrendsArea from '../../components/TrendsArea'
 import Tweet from '../../components/Tweet'
-
+import Helmet from 'react-helmet'
 
 class Home extends Component {
    constructor() {
-        super()
+       super()
 
        this.state = {
            novoTweet: '',
-           tweets: ['alo alo w brazil', 'xablau']
+           tweets: []
        }
+
+
 
     //    this.adicionaTweet = this.adicionaTweet.bind(this)
    }
 
-//    adicionaTweet(event) {
-//         // Prevenir o default?
-//         event.preventDefault()
-//         // primeiro pegamos o conteudo
-//         console.log(this)
-//         // valida o conteudo?
-//         // põe no state?
-//    }
-
-   teste = 'Mario'
+   componentDidMount() {
+       console.log('didMount')
+       fetch(`http://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
+       .then( (respostaDoServidor) => respostaDoServidor.json() )
+       .then( (tweetsVindosDoServidor) => {
+            this.setState({
+                tweets: tweetsVindosDoServidor
+            })
+       })
+       // Façam  uma mensagem de 'carregando' enquanto não chegam
+       // os tweets
+   }
 
    adicionaTweet = (event) => { // Stage 3 do TC39
     event.preventDefault()
     console.log(this.state.novoTweet)
     // valida o conteudo?
     if(this.state.novoTweet) {
-        this.setState({
-            tweets: [this.state.novoTweet, ...this.state.tweets],
-            novoTweet: ''
+        fetch(`http://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
+            method: 'POST',
+            body: JSON.stringify({ conteudo: this.state.novoTweet })
         })
+        .then((respostaDoServidor) => {
+            return respostaDoServidor.json()
+        })
+        .then((respostaConvertidaEmObjeto) => {
+            console.log('Que danado que aconteceu', respostaConvertidaEmObjeto)
+
+            this.setState({
+                tweets: [respostaConvertidaEmObjeto, ...this.state.tweets],
+                novoTweet: ''
+            })
+        })
+
     }
    }
 
   render() {
+
     //   console.log('Render rodando loucamente')
     return (
       <Fragment>
+        <Helmet>
+            <title>Twitelum - Tweets ({ `${this.state.tweets.length}` })</title>
+        </Helmet>
         <Cabecalho>
             <NavMenu usuario="@omariosouto" />
         </Cabecalho>
@@ -84,8 +104,20 @@ class Home extends Component {
                 <Widget>
                     <div className="tweetsArea">
                         {
+                            this.state.tweets.length === 0 
+                            ? <h2>Loading... Cargando... Carregando...</h2>
+                            : ''
+                        }
+
+                        {
                             this.state.tweets.map(function(tweetAtual, indice) {
-                                return <Tweet key={indice} texto={tweetAtual} />
+                                return <Tweet
+                                        key={tweetAtual._id}
+                                        id={tweetAtual._id}
+                                        texto={tweetAtual.conteudo}
+                                        likeado={tweetAtual.likeado}
+                                        totalLikes={tweetAtual.totalLikes}
+                                        usuario={tweetAtual.usuario} />
                             })
                         }
                     </div>

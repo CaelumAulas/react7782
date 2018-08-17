@@ -14,16 +14,20 @@ import Page404 from './pages/Page404'
 
 class PrivateRoute extends Component {
     render() {
-        console.log(this.props)
         if(localStorage.getItem('TOKEN')) {
             const ComponentQueVainaTela = this.props.component
-            return ( <ComponentQueVainaTela /> )
+            return ( <Route component={ComponentQueVainaTela} /> )
+            // return ( <ComponentQueVainaTela /> )
         } else {
             return ( <Redirect to="/login" /> )
         }
     }
 }
 
+const LogoutPage = () => {
+    localStorage.removeItem('TOKEN')
+    return <Redirect to="/login" />
+}
 
 export default class Routes extends Component {
     render() {
@@ -31,6 +35,7 @@ export default class Routes extends Component {
             <Switch>
                 <PrivateRoute path="/" exact component={Home} />
                 <Route path="/login" component={LoginPage} />
+                <Route path="/logout" component={LogoutPage}></Route>
                 <Route component={Page404} />
             </Switch>
         )

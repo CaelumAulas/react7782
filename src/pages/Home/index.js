@@ -65,6 +65,7 @@ class Home extends Component {
       <Fragment>
         <Helmet>
             <title>Twitelum - Tweets ({ `${this.state.tweets.length}` })</title>
+            
         </Helmet>
         <Cabecalho>
             <NavMenu usuario="@omariosouto" />

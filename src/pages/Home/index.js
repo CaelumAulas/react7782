@@ -6,6 +6,7 @@ import Widget from '../../components/Widget'
 import TrendsArea from '../../components/TrendsArea'
 import Tweet from '../../components/Tweet'
 import Helmet from 'react-helmet'
+import Modal from '../../components/Modal'
 
 class Home extends Component {
    constructor() {
@@ -13,8 +14,9 @@ class Home extends Component {
 
        this.state = {
            novoTweet: '',
-           tweets: []
-       }
+           tweets: [],
+           tweetAtivo: {}
+        }
 
 
 
@@ -58,14 +60,45 @@ class Home extends Component {
     }
    }
 
+   removeOTweet = (idDoTweet) => {
+        console.log('vamo q vamo', idDoTweet)
+        // # Deixar em uma linha só!
+        const listaAtualizada = this.state.tweets.filter((tweetAtual) => {
+                return tweetAtual._id !== idDoTweet
+        })
+
+        fetch(`http://twitelum-api.herokuapp.com/tweets/${idDoTweet}?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
+            method: 'DELETE'
+        })
+        .then( (resposta) => resposta.json() ) // Validação seria aqui!
+        .then( (respostaConvertidaEmObjeto) => {
+            console.log(respostaConvertidaEmObjeto)
+            this.setState({
+                tweets: listaAtualizada
+            })
+        })
+    }
+
+    abreModal = (idDoTweetQueVaiNoModal) => {
+        console.log('Abre modal', idDoTweetQueVaiNoModal)
+        const tweetQueVaiFicarAtivo = this.state.tweets.find((tweetAtual) => {
+            return tweetAtual._id === idDoTweetQueVaiNoModal
+        })
+        this.setState({
+            tweetAtivo: tweetQueVaiFicarAtivo
+        })
+    }
+
   render() {
 
     //   console.log('Render rodando loucamente')
     return (
       <Fragment>
         <Helmet>
-            <title>Twitelum - Tweets ({ `${this.state.tweets.length}` })</title>
-            
+            <title>
+                Twitelum - Tweets ({ `${this.state.tweets.length}` })
+            </title>
+
         </Helmet>
         <Cabecalho>
             <NavMenu usuario="@omariosouto" />
@@ -111,13 +144,16 @@ class Home extends Component {
                         }
 
                         {
-                            this.state.tweets.map(function(tweetAtual, indice) {
+                            this.state.tweets.map((tweetAtual, indice) => {
                                 return <Tweet
                                         key={tweetAtual._id}
                                         id={tweetAtual._id}
                                         texto={tweetAtual.conteudo}
+                                        removivel={tweetAtual.removivel}
                                         likeado={tweetAtual.likeado}
                                         totalLikes={tweetAtual.totalLikes}
+                                        removeHandler={() => { this.removeOTweet(tweetAtual._id) }}
+                                        abreModalHandler={ () => { this.abreModal(tweetAtual._id) } }
                                         usuario={tweetAtual.usuario} />
                             })
                         }
@@ -125,6 +161,19 @@ class Home extends Component {
                 </Widget>
             </Dashboard>
         </div>
+
+        <Modal isAberto={Boolean(this.state.tweetAtivo._id)}>
+            {
+                Boolean(this.state.tweetAtivo._id) &&
+                <Widget>
+                    <Tweet 
+                        id={this.state.tweetAtivo._id}
+                        texto={this.state.tweetAtivo.conteudo}
+                        usuario={this.state.tweetAtivo.usuario}
+                    />
+                </Widget>
+            }
+        </Modal>
       </Fragment>
     );
   }

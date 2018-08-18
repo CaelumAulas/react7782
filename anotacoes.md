@@ -49,3 +49,4 @@
 - Pixel pipeline
 - Como não repetir um id? https://www.npmjs.com/package/uuid
 - React Components: https://github.com/brillout/awesome-react-components
+- Operador Curto Circuito: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Operadores_Logicos

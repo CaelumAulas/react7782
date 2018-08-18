@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './tweet.css'
+import PropTypes from 'prop-types'
 
 class Tweet extends Component {
 
@@ -21,10 +22,7 @@ class Tweet extends Component {
         })
 
         // Mandar pra API
-        fetch(`http://twitelum-api.herokuapp.com
-        /tweets
-        /${this.props.id}
-        /like?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
+        fetch(`http://twitelum-api.herokuapp.com/tweets/${this.props.id}/like?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
             method: 'POST'
         })
         .then((respostaDoServer) => respostaDoServer.json())
@@ -34,15 +32,21 @@ class Tweet extends Component {
     render() {
         return (
             <article className="tweet">
-                <div className="tweet__cabecalho">
+                <div className="tweet__cabecalho" onClick={this.props.abreModalHandler}>
                     <img className="tweet__fotoUsuario" src={ this.props.usuario.foto } alt="" />
                     <span className="tweet__nomeUsuario">{ this.props.usuario.nome }</span>
                     <a href=""><span className="tweet__userName">@{ this.props.usuario.login }</span></a>
                 </div>
-                <p className="tweet__conteudo">
+                <p className="tweet__conteudo" onClick={this.props.abreModalHandler}>
                     { this.props.texto }
                 </p>
                 <footer className="tweet__footer">
+                    { 
+                        this.props.removivel &&
+                            <button onClick={this.props.removeHandler} className='btn btn--blue btn--remove'>
+                                X
+                            </button>
+                    }
                     <button className="btn btn--clean" onClick={this.likeHandler}>
                         
                         <svg className={`
@@ -64,6 +68,22 @@ class Tweet extends Component {
             </article>
         )
     }
+}
+
+// npm install prop-types
+// import PropTypes from 'prop-types'
+Tweet.propTypes = {
+    id: PropTypes.string.isRequired,
+    texto: PropTypes.string.isRequired,
+    removivel: PropTypes.bool,
+    likeado: PropTypes.bool,
+    totalLikes: PropTypes.number,
+    removeHandler: PropTypes.func,
+    usuario: PropTypes.shape({
+        foto: PropTypes.string,
+        nome: PropTypes.string,
+        login: PropTypes.string
+    }).isRequired
 }
 
 export default Tweet

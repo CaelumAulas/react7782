@@ -24,16 +24,17 @@ class Home extends Component {
    }
 
    componentDidMount() {
-       console.log('didMount')
+       console.log(window.store.getState())
+        window.store.subscribe(() => {
+            this.setState({
+                tweets: window.store.getState()
+            })
+        })
        fetch(`http://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
        .then( (respostaDoServidor) => respostaDoServidor.json() )
        .then( (tweetsVindosDoServidor) => {
-            this.setState({
-                tweets: tweetsVindosDoServidor
-            })
+            window.store.dispatch({ type: 'CARREGA_TWEETS', tweets: tweetsVindosDoServidor })
        })
-       // Façam  uma mensagem de 'carregando' enquanto não chegam
-       // os tweets
    }
 
    adicionaTweet = (event) => { // Stage 3 do TC39
@@ -89,6 +90,17 @@ class Home extends Component {
         })
     }
 
+    fechaModal = (evento) => {
+        const elementoAlvo = evento.target
+        const isModal = elementoAlvo.classList.contains('modal')
+
+        if(isModal) {
+            console.log('fecha o modal')
+            this.setState({
+                tweetAtivo: {}
+            })
+        }
+    }
   render() {
 
     //   console.log('Render rodando loucamente')
@@ -162,7 +174,9 @@ class Home extends Component {
             </Dashboard>
         </div>
 
-        <Modal isAberto={Boolean(this.state.tweetAtivo._id)}>
+        <Modal
+            isAberto={Boolean(this.state.tweetAtivo._id)}
+            fechaModal={this.fechaModal}>
             {
                 Boolean(this.state.tweetAtivo._id) &&
                 <Widget>
@@ -170,6 +184,8 @@ class Home extends Component {
                         id={this.state.tweetAtivo._id}
                         texto={this.state.tweetAtivo.conteudo}
                         usuario={this.state.tweetAtivo.usuario}
+                        totalLikes={this.state.tweetAtivo.totalLikes}
+                        likeado={this.state.tweetAtivo.likeado}
                     />
                 </Widget>
             }

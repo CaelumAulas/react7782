@@ -7,6 +7,8 @@ import TrendsArea from '../../components/TrendsArea'
 import Tweet from '../../components/Tweet'
 import Helmet from 'react-helmet'
 import Modal from '../../components/Modal'
+import PropTypes from 'prop-types'
+import * as TweetsActions from '../../actions/TweetsActions'
 
 class Home extends Component {
    constructor() {
@@ -17,24 +19,23 @@ class Home extends Component {
            tweets: [],
            tweetAtivo: {}
         }
-
-
-
     //    this.adicionaTweet = this.adicionaTweet.bind(this)
    }
 
+   static contextTypes = {
+       store: PropTypes.object
+   }
+
+
    componentDidMount() {
-       console.log(window.store.getState())
-        window.store.subscribe(() => {
+       console.log(this.context.store.getState())
+        this.context.store.subscribe(() => {
             this.setState({
-                tweets: window.store.getState()
+                tweets: this.context.store.getState()
             })
         })
-       fetch(`http://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
-       .then( (respostaDoServidor) => respostaDoServidor.json() )
-       .then( (tweetsVindosDoServidor) => {
-            window.store.dispatch({ type: 'CARREGA_TWEETS', tweets: tweetsVindosDoServidor })
-       })
+        // Fazer o import lá em cima nos imports
+        this.context.store.dispatch(TweetsActions.carregaTweets())
    }
 
    adicionaTweet = (event) => { // Stage 3 do TC39

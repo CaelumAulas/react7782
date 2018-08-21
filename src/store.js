@@ -1,5 +1,5 @@
-import { createStore } from 'redux'
-
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk';
 
 const stateInicial = []
 function tweetsReducer(stateDentroDaStore = stateInicial, acaoDisparadaPeloDev) {
@@ -9,7 +9,11 @@ function tweetsReducer(stateDentroDaStore = stateInicial, acaoDisparadaPeloDev) 
     }
     return stateDentroDaStore
 }
-window.store = createStore(tweetsReducer)
+
+export default createStore(
+    tweetsReducer,
+    applyMiddleware(thunk)
+)
 
 
 // const createStore = (reducer) => {
@@ -17,10 +21,15 @@ window.store = createStore(tweetsReducer)
 //     const subscribers = []
 
 //     const dispatch = (actionDisparadaPeloDev) => {
-//         state = reducer(state, actionDisparadaPeloDev)
-//         subscribers.forEach( (funcaoAtual) => {
-//             funcaoAtual()
-//         })
+//         if(typeof actionDisparadaPeloDev === 'function') {
+//             actionDisparadaPeloDev(dispatch)
+//         } else {
+//             state = reducer(state, actionDisparadaPeloDev)
+//             subscribers.forEach( (funcaoAtual) => {
+//                 funcaoAtual()
+//             })
+
+//         }
 //     }
 //     const subscribe = (funcao) => {
 //         subscribers.push(funcao)

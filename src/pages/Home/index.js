@@ -4,7 +4,7 @@ import NavMenu from '../../components/NavMenu'
 import Dashboard from '../../components/Dashboard'
 import Widget from '../../components/Widget'
 import TrendsArea from '../../components/TrendsArea'
-import Tweet from '../../components/Tweet'
+import Tweet from '../../containers/TweetContainer'
 import Helmet from 'react-helmet'
 import Modal from '../../components/Modal'
 import PropTypes from 'prop-types'
@@ -28,58 +28,27 @@ class Home extends Component {
 
 
    componentDidMount() {
-       console.log(this.context.store.getState())
         this.context.store.subscribe(() => {
             this.setState({
-                tweets: this.context.store.getState()
-            })
-        })
-        // Fazer o import lá em cima nos imports
-        this.context.store.dispatch(TweetsActions.carregaTweets())
-   }
-
-   adicionaTweet = (event) => { // Stage 3 do TC39
-    event.preventDefault()
-    console.log(this.state.novoTweet)
-    // valida o conteudo?
-    if(this.state.novoTweet) {
-        fetch(`http://twitelum-api.herokuapp.com/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
-            method: 'POST',
-            body: JSON.stringify({ conteudo: this.state.novoTweet })
-        })
-        .then((respostaDoServidor) => {
-            return respostaDoServidor.json()
-        })
-        .then((respostaConvertidaEmObjeto) => {
-            console.log('Que danado que aconteceu', respostaConvertidaEmObjeto)
-
-            this.setState({
-                tweets: [respostaConvertidaEmObjeto, ...this.state.tweets],
+                tweets: this.context.store.getState(),
                 novoTweet: ''
             })
         })
 
+        this.context.store.dispatch(TweetsActions.carregaTweets())
+    }
+
+   adicionaTweet = (event) => { // Stage 3 do TC39
+    event.preventDefault()
+    if(this.state.novoTweet) {
+        this.context
+            .store.dispatch(TweetsActions.adicionaTweet(this.state.novoTweet))
+
+        this.setState({
+            novoTweet: ''
+        })
     }
    }
-
-   removeOTweet = (idDoTweet) => {
-        console.log('vamo q vamo', idDoTweet)
-        // # Deixar em uma linha só!
-        const listaAtualizada = this.state.tweets.filter((tweetAtual) => {
-                return tweetAtual._id !== idDoTweet
-        })
-
-        fetch(`http://twitelum-api.herokuapp.com/tweets/${idDoTweet}?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
-            method: 'DELETE'
-        })
-        .then( (resposta) => resposta.json() ) // Validação seria aqui!
-        .then( (respostaConvertidaEmObjeto) => {
-            console.log(respostaConvertidaEmObjeto)
-            this.setState({
-                tweets: listaAtualizada
-            })
-        })
-    }
 
     abreModal = (idDoTweetQueVaiNoModal) => {
         console.log('Abre modal', idDoTweetQueVaiNoModal)
@@ -165,7 +134,7 @@ class Home extends Component {
                                         removivel={tweetAtual.removivel}
                                         likeado={tweetAtual.likeado}
                                         totalLikes={tweetAtual.totalLikes}
-                                        removeHandler={() => { this.removeOTweet(tweetAtual._id) }}
+                                        // removeHandler={() => { this.removeOTweet(tweetAtual._id) }}
                                         abreModalHandler={ () => { this.abreModal(tweetAtual._id) } }
                                         usuario={tweetAtual.usuario} />
                             })

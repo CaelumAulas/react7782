@@ -6,6 +6,7 @@ const mapDispatchToProps = (dispatch, propsRecebidas) => {
     return {
         removeHandler: function() {
             dispatch(TweetsActions.removeTweet(propsRecebidas.id))
+            dispatch({ type: 'FECHA_MODAL' })
         }
     }
 }

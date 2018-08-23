@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './tweet.css'
 import PropTypes from 'prop-types'
-import * as TweetsActions from '../../actions/TweetsActions'
+// import * as TweetsActions from '../../actions/TweetsActions'
 
 
 class Tweet extends Component {
@@ -14,10 +14,9 @@ class Tweet extends Component {
         }
     }
 
-    static contextTypes = {
-        store: PropTypes.object
-    }
-
+    // static contextTypes = {
+    //     store: PropTypes.object
+    // }
     // removeHandler = () => {
     //     console.log('Estou removendo por meio do Tweet')
     //     const idDoTweet = this.props.id
@@ -26,14 +25,11 @@ class Tweet extends Component {
 
     likeHandler = () => {
         const { likeado, totalLikes } = this.state
-        // const likeado = this.state.likeado
-        // const totalLikes = this.state.totalLikes
         this.setState({
             likeado: !likeado,
             totalLikes: likeado ? totalLikes - 1 : totalLikes + 1
         })
 
-        // Mandar pra API
         fetch(`http://twitelum-api.herokuapp.com/tweets/${this.props.id}/like?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
             method: 'POST'
         })

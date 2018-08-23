@@ -29,9 +29,10 @@ class Home extends Component {
 
    componentDidMount() {
         this.context.store.subscribe(() => {
+            console.log(this.context.store.getState())
             this.setState({
-                tweets: this.context.store.getState(),
-                novoTweet: ''
+                tweetAtivo: this.context.store.getState().tweetAtivo,
+                tweets: this.context.store.getState().tweets,
             })
         })
 
@@ -51,13 +52,10 @@ class Home extends Component {
    }
 
     abreModal = (idDoTweetQueVaiNoModal) => {
-        console.log('Abre modal', idDoTweetQueVaiNoModal)
-        const tweetQueVaiFicarAtivo = this.state.tweets.find((tweetAtual) => {
-            return tweetAtual._id === idDoTweetQueVaiNoModal
-        })
-        this.setState({
-            tweetAtivo: tweetQueVaiFicarAtivo
-        })
+        this.context.store.dispatch({ type: 'ABRE_MODAL', idDoTweetQueVaiNoModal  })
+        // this.setState({
+        //     tweetAtivo: tweetQueVaiFicarAtivo
+        // })
     }
 
     fechaModal = (evento) => {
@@ -66,9 +64,7 @@ class Home extends Component {
 
         if(isModal) {
             console.log('fecha o modal')
-            this.setState({
-                tweetAtivo: {}
-            })
+            this.context.store.dispatch({ type: 'FECHA_MODAL' })
         }
     }
   render() {
@@ -155,6 +151,7 @@ class Home extends Component {
                         texto={this.state.tweetAtivo.conteudo}
                         usuario={this.state.tweetAtivo.usuario}
                         totalLikes={this.state.tweetAtivo.totalLikes}
+                        removivel={this.state.tweetAtivo.removivel}
                         likeado={this.state.tweetAtivo.likeado}
                     />
                 </Widget>
